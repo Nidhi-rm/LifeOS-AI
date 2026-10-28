@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <UserSecretsId>LifeOS.Api-Local-Development</UserSecretsId>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -13,6 +14,15 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LifeOS.Backend\LifeOS.Backend.csproj" />
+    <Compile Remove="Models\**\*.cs;Data\**\*.cs;Migrations\**\*.cs;Services\DailyFileLoggerProvider.cs;Services\DesktopBackend.cs;Services\OpenAiAssistantService.cs;Services\PasswordResetEmailSender.cs;Services\TaskReminderService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="../../../frontend/index.html;../../../frontend/app.js;../../../frontend/*.css;../../../frontend/favicon.svg" Link="wwwroot/%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

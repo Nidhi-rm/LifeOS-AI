@@ -1,0 +1,32 @@
+<Window x:Class="LifeOS.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="LifeOS" WindowStyle="None" ResizeMode="NoResize"
+        WindowStartupLocation="Manual" Background="#F7F7F3">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="#FBFAF7" MouseLeftButtonDown="TitleBarMouseLeftButtonDown">
+            <TextBlock Text="LifeOS" VerticalAlignment="Center" Margin="18,0,0,0" Foreground="#385B43"
+                       FontSize="13" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="—" Width="48" Click="MinimizeClick" ToolTip="Minimize"
+                        Background="Transparent" Foreground="#596257" BorderThickness="0" FontSize="16" />
+                <Button Content="×" Width="52" Click="CloseClick" ToolTip="Close LifeOS"
+                        Background="Transparent" Foreground="#596257" BorderThickness="0" FontSize="21" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+        <wv2:WebView2 x:Name="LifeOsView" Visibility="Collapsed" />
+        <StackPanel x:Name="StartupPanel" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520" Margin="32">
+            <TextBlock x:Name="StartupTitle" Text="Starting LifeOS…" FontSize="28" FontWeight="SemiBold"
+                       Foreground="#20251F" HorizontalAlignment="Center" />
+            <TextBlock x:Name="StartupMessage" Text="Preparing your private workspace." FontSize="15"
+                       Foreground="#687067" TextAlignment="Center" TextWrapping="Wrap" Margin="0,12,0,0" />
+        </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

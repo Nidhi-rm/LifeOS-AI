@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "LifeOS Desktop (backend DLL)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build LifeOS Desktop",
+      "program": "${workspaceFolder}/backend/src/LifeOS.Desktop/bin/Debug/net10.0-windows/LifeOS.Desktop.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    }
+  ]
+}

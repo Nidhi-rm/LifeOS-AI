@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="GlobalUsings.cs" />
+    <Compile Include="../LifeOS.Api/Models/**/*.cs" Link="Models/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="../LifeOS.Api/Data/**/*.cs" Link="Data/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="../LifeOS.Api/Migrations/**/*.cs" Link="Migrations/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="../LifeOS.Api/Services/DailyFileLoggerProvider.cs" Link="Services/DailyFileLoggerProvider.cs" />
+    <Compile Include="../LifeOS.Api/Services/DesktopBackend.cs" Link="Services/DesktopBackend.cs" />
+    <Compile Include="../LifeOS.Api/Services/OpenAiAssistantService.cs" Link="Services/OpenAiAssistantService.cs" />
+    <Compile Include="../LifeOS.Api/Services/PasswordResetEmailSender.cs" Link="Services/PasswordResetEmailSender.cs" />
+    <Compile Include="../LifeOS.Api/Services/TaskReminderService.cs" Link="Services/TaskReminderService.cs" />
+  </ItemGroup>
+</Project>

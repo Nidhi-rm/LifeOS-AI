@@ -2,20 +2,16 @@ services:
   - type: web
     name: lifeos-api
     runtime: docker
-    plan: 0.5c-512mb
+    plan: free
     region: singapore
     healthCheckPath: /api/health
-    disk:
-      name: lifeos-data
-      mountPath: /data
-      sizeGB: 5
     envVars:
       - key: ConnectionStrings__LifeOS
-        value: Data Source=/data/lifeos.db
+        value: Data Source=/tmp/lifeos.db
       - key: Documents__StoragePath
-        value: /data/documents
+        value: /tmp/documents
       - key: Logging__FilePath
-        value: /data/logs
+        value: /tmp/logs
       - key: Cors__AllowedOrigins__0
         value: capacitor://localhost
       - key: Cors__AllowedOrigins__1

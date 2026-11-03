@@ -39,17 +39,17 @@ To restore, select a LifeOS backup ZIP in Settings and confirm. Restoring **repl
 
 ## Mobile app development (Android and iPhone)
 
-The mobile shell is prepared with Capacitor, but mobile sign-in and cross-device sync require a deployed HTTPS LifeOS API. The API must use persistent storage for both its SQLite database and uploaded documents. The included Docker Compose setup binds to `127.0.0.1` for local development only; do not expose that HTTP port directly to the internet.
+The mobile shell is prepared with Capacitor, but mobile sign-in and cross-device sync require a deployed HTTPS LifeOS API. The included Render Blueprint is configured for a free demo. Render's free web service has temporary storage: the SQLite database and uploaded documents can be erased when the service restarts, redeploys, or spins down after inactivity. Do not use this free setup for important data. The included Docker Compose setup binds to `127.0.0.1` for local development only; do not expose that HTTP port directly to the internet.
 
 ### Deploy the API on Render
 
 1. Push the project to a GitHub repository you control. Keep passwords, API keys, and local data files out of the repository.
 2. Sign in to Render, choose **New > Blueprint**, connect the repository, and select its root `render.yaml` file.
-3. Review the proposed resources before creating them. The Blueprint requests a paid 0.5 CPU / 512 MB web service in Singapore and a 5 GB persistent disk for the SQLite database and documents; Render displays the current charges before you confirm. The API is public so your phone can reach it, and Render provides the HTTPS URL.
+3. Review the proposed resources before creating them. The Blueprint requests a free web service in Singapore and no persistent disk. Render's free web services spin down after 15 minutes without traffic and use temporary storage, so data may be lost. The API is public so your phone can reach it, and Render provides the HTTPS URL.
 4. Wait for the service to deploy, then check `https://<service-name>.onrender.com/api/health`. A healthy response is `{"status":"ok"}`.
 5. Keep the Render URL; use it as `LIFEOS_API_BASE_URL` when building the mobile app below.
 
-This initial configuration runs one API instance because SQLite and uploaded files are on one persistent disk. Do not scale it to multiple instances. The Blueprint selects OpenAI for the hosted AI provider, but does not include an API key; add `OPENAI_API_KEY` as a secret in the Render dashboard if you want AI replies. OpenAI API usage may incur charges. SMTP is also optional and must be configured in Render if you want password reset and reminder emails.
+This is for testing only; keep a workspace backup and expect to restore it if Render clears temporary files. Do not scale it to multiple instances. The Blueprint selects OpenAI for the hosted AI provider, but does not include an API key; adding `OPENAI_API_KEY` is optional and OpenAI usage may incur charges. SMTP is also optional; Render free services cannot send outbound SMTP on ports 25, 465, or 587, so password reset and reminder emails need a different mail setup.
 
 ### Connect the Windows app to the shared workspace
 

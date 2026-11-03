@@ -1,0 +1,9 @@
+{
+  "appId": "com.lifeos.workspace",
+  "appName": "LifeOS",
+  "webDir": "mobile-web",
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "capacitor"
+  }
+}

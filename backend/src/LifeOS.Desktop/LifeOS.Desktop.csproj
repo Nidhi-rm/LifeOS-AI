@@ -13,6 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\frontend\**\*" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\frontend\index.html;..\..\..\frontend\app.js;..\..\..\frontend\*.css;..\..\..\frontend\favicon.svg" Link="wwwroot\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@
     <Compile Include="../LifeOS.Api/Services/DailyFileLoggerProvider.cs" Link="Services/DailyFileLoggerProvider.cs" />
     <Compile Include="../LifeOS.Api/Services/DesktopBackend.cs" Link="Services/DesktopBackend.cs" />
     <Compile Include="../LifeOS.Api/Services/OpenAiAssistantService.cs" Link="Services/OpenAiAssistantService.cs" />
+    <Compile Include="../LifeOS.Api/Services/WorkspaceBackupRestore.cs" Link="Services/WorkspaceBackupRestore.cs" />
     <Compile Include="../LifeOS.Api/Services/PasswordResetEmailSender.cs" Link="Services/PasswordResetEmailSender.cs" />
     <Compile Include="../LifeOS.Api/Services/TaskReminderService.cs" Link="Services/TaskReminderService.cs" />
   </ItemGroup>

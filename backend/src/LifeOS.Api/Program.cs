@@ -22,12 +22,16 @@ public static class LifeOsApplication
             ContentRootPath = Directory.GetCurrentDirectory(),
             WebRootPath = webRoot
         });
-        builder.Logging.AddProvider(new DailyFileLoggerProvider(Path.Combine(builder.Environment.ContentRootPath, "logs")));
+        var logDirectory = builder.Configuration["Logging:FilePath"] ?? Path.Combine(builder.Environment.ContentRootPath, "logs");
+        builder.Logging.AddProvider(new DailyFileLoggerProvider(logDirectory));
         builder.Services.AddDbContext<LifeOSDbContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("LifeOS") ?? "Data Source=lifeos.db"));
         builder.Services.AddAuthentication("Bearer")
             .AddScheme<AuthenticationSchemeOptions, BearerTokenHandler>("Bearer", _ => { });
         builder.Services.AddAuthorization();
+        var mobileOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+        builder.Services.AddCors(options => options.AddPolicy("mobile", policy =>
+            policy.WithOrigins(mobileOrigins).AllowAnyHeader().AllowAnyMethod()));
         builder.Services.AddRateLimiter(options => options.AddPolicy("password-reset", context =>
             RateLimitPartition.GetFixedWindowLimiter(
                 context.Connection.RemoteIpAddress?.ToString() ?? "desktop",
@@ -38,7 +42,7 @@ public static class LifeOsApplication
                     QueueLimit = 0,
                     AutoReplenishment = true
                 })));
-        builder.Services.AddHttpClient<OpenAiAssistantService>();
+        builder.Services.AddHttpClient<OpenAiAssistantService>(client => client.Timeout = TimeSpan.FromSeconds(90));
         builder.Services.AddSingleton<PasswordResetEmailSender>();
         builder.Services.AddHostedService<TaskReminderService>();
         builder.Services.AddControllers();
@@ -71,6 +75,7 @@ public static class LifeOsApplication
         app.UseDefaultFiles();
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseCors("mobile");
         app.UseAuthentication();
         app.UseRateLimiter();
         app.UseAuthorization();

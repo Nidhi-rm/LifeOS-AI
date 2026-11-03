@@ -1,0 +1,14 @@
+services:
+  lifeos-api:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      Cors__AllowedOrigins__0: capacitor://localhost
+      Cors__AllowedOrigins__1: https://localhost
+    volumes:
+      - lifeos-data:/data
+    restart: unless-stopped
+
+volumes:
+  lifeos-data:

@@ -24,12 +24,22 @@ public partial class MainWindow : Window
             FitToWorkArea();
             StartupMessage.Text = "Loading your private workspace.";
             host = await DesktopBackendHost.StartAsync(shutdown.Token);
-            await LifeOsView.EnsureCoreWebView2Async();
+            var webViewData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LifeOS", "WebView2");
+            Directory.CreateDirectory(webViewData);
+            var webViewEnvironment = await CoreWebView2Environment.CreateAsync(null, webViewData);
+            await LifeOsView.EnsureCoreWebView2Async(webViewEnvironment);
             var frontend = Path.Combine(AppContext.BaseDirectory, "wwwroot");
             LifeOsView.CoreWebView2.SetVirtualHostNameToFolderMapping(
                 "lifeos.local", frontend, CoreWebView2HostResourceAccessKind.DenyCors);
             LifeOsView.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
             LifeOsView.CoreWebView2.Settings.IsWebMessageEnabled = true;
+            if (!string.IsNullOrWhiteSpace(host.ApiBaseUrl))
+            {
+                if (!Uri.TryCreate(host.ApiBaseUrl, UriKind.Absolute, out var apiUri) || apiUri.Scheme != Uri.UriSchemeHttps)
+                    throw new InvalidOperationException("LifeOS:ApiBaseUrl must be a valid HTTPS URL. Clear LifeOS__ApiBaseUrl to use local Windows data.");
+                var configScript = $"window.LifeOSConfig = Object.freeze({{ apiBaseUrl: {JsonSerializer.Serialize(host.ApiBaseUrl)} }});";
+                await LifeOsView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(configScript);
+            }
             LifeOsView.Source = new Uri("https://lifeos.local/index.html");
             LifeOsView.Visibility = Visibility.Visible;
             StartupPanel.Visibility = Visibility.Collapsed;
@@ -53,11 +63,15 @@ public partial class MainWindow : Window
             id = root.GetProperty("id").GetString() ?? throw new InvalidDataException("A bridge request ID is required.");
             var operation = root.GetProperty("operation").GetString() ?? "unknown";
             var token = root.TryGetProperty("token", out var tokenValue) ? tokenValue.GetString() : null;
-            var entityId = root.TryGetProperty("entityId", out var idValue) && idValue.TryGetInt32(out var parsedId) ? parsedId : (int?)null;
+            var entityId = root.TryGetProperty("entityId", out var idValue)
+                && idValue.ValueKind == JsonValueKind.Number
+                && idValue.TryGetInt32(out var parsedId) ? parsedId : (int?)null;
             var data = root.TryGetProperty("data", out var dataValue) ? dataValue.Clone() : JsonDocument.Parse("{}").RootElement.Clone();
             var result = await host.Backend.ExecuteAsync(new LifeOS.Api.Services.DesktopCommand(operation, data, token, entityId), shutdown.Token);
-            var responseBytes = result.Value is null ? [] : JsonSerializer.SerializeToUtf8Bytes(result.Value);
-            Reply(id, new { id, status = result.Status, headers = new Dictionary<string, string> { ["content-type"] = "application/json" }, body = Convert.ToBase64String(responseBytes) });
+            var responseBytes = result.Binary ?? (result.Value is null ? [] : JsonSerializer.SerializeToUtf8Bytes(result.Value, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+            var responseHeaders = new Dictionary<string, string> { ["content-type"] = result.ContentType ?? "application/json" };
+            if (result.FileName is not null) responseHeaders["content-disposition"] = $"attachment; filename*=UTF-8''{Uri.EscapeDataString(result.FileName)}";
+            Reply(id, new { id, status = result.Status, headers = responseHeaders, body = Convert.ToBase64String(responseBytes) });
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {

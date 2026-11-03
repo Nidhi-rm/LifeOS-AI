@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta name="lifeos-api-base" content="">
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta name="theme-color" content="#f6f5f1"><title>LifeOS — make room for what matters</title>
@@ -94,7 +95,7 @@
           <section class="task-panel settings-panel"><div class="panel-heading"><div><div class="eyebrow">SECURITY</div><h2>Change password</h2></div></div>
             <form id="password-form" class="settings-form"><label>Current password<input id="current-password" type="password" required autocomplete="current-password"></label><label>New password<input id="new-password" type="password" required minlength="10" maxlength="128" autocomplete="new-password"><small>Use at least 10 characters. Other signed-in sessions will be revoked.</small></label><button class="primary" type="submit">Change password</button><p id="password-error" class="error" role="alert"></p></form>
           </section>
-          <section class="task-panel settings-panel"><div class="panel-heading"><div><div class="eyebrow">YOUR DATA</div><h2>Workspace backup</h2></div></div><p class="settings-description">Download your tasks, finance and fitness records, career details, document metadata, and uploaded files in one archive.</p><button class="primary" id="download-backup" type="button">Download backup</button><p id="backup-error" class="error" role="alert"></p></section>
+          <section class="task-panel settings-panel"><div class="panel-heading"><div><div class="eyebrow">YOUR DATA</div><h2>Workspace backup</h2></div></div><p class="settings-description">Download your tasks, finance and fitness records, career details, document metadata, and uploaded files in one archive.</p><button class="primary" id="download-backup" type="button">Download backup</button><div class="restore-backup"><label for="restore-backup-file">Restore from a LifeOS backup (.zip)</label><input id="restore-backup-file" type="file" accept=".zip,application/zip"><button class="secondary-button" id="restore-backup" type="button">Restore backup</button></div><p id="backup-error" class="error" role="alert"></p></section>
         </div>
       </section>
     </main>
@@ -107,6 +108,13 @@
       <div class="auth-aside-foot">A thoughtful start to a more intentional day.</div>
     </section>
     <section class="auth-card" aria-labelledby="auth-title">
+      <div class="auth-partner-logo" role="img" aria-label="Cognizant">
+        <svg viewBox="0 0 340 72" aria-hidden="true" focusable="false">
+          <defs><linearGradient id="cognizant-mark" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#006b83"/><stop offset=".52" stop-color="#168fb0"/><stop offset="1" stop-color="#7bc8d5"/></linearGradient></defs>
+          <path fill="url(#cognizant-mark)" d="M2 36 23 5h34l25 31-25 31H23L2 36Zm23-31L8 36l20 28h27L35 36 55 5H25Zm32 0L37 36l20 28 23-28L57 5Z"/>
+          <text x="94" y="53" fill="#080b42" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="400" letter-spacing="-2.8">cognizant</text>
+        </svg>
+      </div>
       <div class="eyebrow" id="auth-kicker">YOUR SPACE, YOUR PACE</div><h1 id="auth-title">Welcome back.</h1><p class="subtitle" id="auth-subtitle">Sign in to pick up where you left off.</p>
       <div class="tabs" id="auth-tabs"><button class="tab active" data-mode="login">Sign in</button><button class="tab" data-mode="register">Create account</button></div>
       <form id="auth-form"><label id="name-field" hidden>Your name<input id="auth-name" autocomplete="name" maxlength="100" placeholder="Alex Morgan"></label><label>Email address<input id="auth-email" type="email" autocomplete="email" required placeholder="you@example.com"></label><label>Password<input id="auth-password" type="password" autocomplete="current-password" minlength="10" required placeholder="At least 10 characters"></label><button class="forgot-link" id="forgot-password" type="button">Forgot password?</button><button class="primary auth-submit" id="auth-submit">Sign in</button><p class="error" id="auth-error" role="alert"></p></form>

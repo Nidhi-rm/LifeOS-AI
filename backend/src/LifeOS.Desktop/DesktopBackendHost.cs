@@ -4,17 +4,21 @@ using LifeOS.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 public sealed class DesktopBackendHost : IAsyncDisposable
 {
     private readonly ServiceProvider provider;
+    private readonly IHostedService[] hostedServices;
     public IDesktopBackend Backend { get; }
+    public string? ApiBaseUrl { get; private set; }
 
     private DesktopBackendHost(ServiceProvider provider)
     {
         this.provider = provider;
         Backend = provider.GetRequiredService<IDesktopBackend>();
+        hostedServices = provider.GetServices<IHostedService>().ToArray();
     }
 
     public static async Task<DesktopBackendHost> StartAsync(CancellationToken cancellationToken = default)
@@ -35,8 +39,16 @@ public sealed class DesktopBackendHost : IAsyncDisposable
 
         var configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["AI:Provider"] = "Ollama",
+                ["Ollama:ChatUrl"] = "http://localhost:11434/api/chat",
+                ["Ollama:Model"] = "qwen3:4b",
+                ["OpenAI:Model"] = "gpt-6-astra"
+            })
             .AddJsonFile("appsettings.json", optional: true)
             .AddJsonFile("appsettings.Development.json", optional: true)
+            .AddJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft", "UserSecrets", "LifeOS.Api-Local-Development", "secrets.json"), optional: true)
             .AddEnvironmentVariables()
             .Build();
         var services = new ServiceCollection();
@@ -46,8 +58,9 @@ public sealed class DesktopBackendHost : IAsyncDisposable
             builder.AddConfiguration(configuration.GetSection("Logging"));
             builder.AddProvider(new DailyFileLoggerProvider(logDirectory));
         });
-        services.AddHttpClient<OpenAiAssistantService>();
+        services.AddHttpClient<OpenAiAssistantService>(client => client.Timeout = TimeSpan.FromSeconds(90));
         services.AddSingleton<PasswordResetEmailSender>();
+        services.AddHostedService<TaskReminderService>();
         services.AddDbContextFactory<LifeOSDbContext>(options => options.UseSqlite($"Data Source={databasePath}"));
         services.AddSingleton<DesktopBackend>();
         services.AddSingleton<IDesktopBackend>(sp => sp.GetRequiredService<DesktopBackend>());
@@ -62,6 +75,8 @@ public sealed class DesktopBackendHost : IAsyncDisposable
             logger.LogInformation("Applying desktop database migrations");
             await db.Database.MigrateAsync(cancellationToken);
             logger.LogInformation("Desktop database migrations applied");
+            foreach (var hostedService in provider.GetServices<IHostedService>())
+                await hostedService.StartAsync(cancellationToken);
             logger.LogInformation("LifeOS desktop backend started");
         }
         catch (Exception exception)
@@ -70,7 +85,10 @@ public sealed class DesktopBackendHost : IAsyncDisposable
             await provider.DisposeAsync();
             throw;
         }
-        return new DesktopBackendHost(provider);
+        return new DesktopBackendHost(provider)
+        {
+            ApiBaseUrl = configuration["LifeOS:ApiBaseUrl"]?.Trim().TrimEnd('/')
+        };
     }
 
     private static string? FindFrontendRoot()
@@ -101,5 +119,10 @@ public sealed class DesktopBackendHost : IAsyncDisposable
             if (File.Exists(source + suffix)) File.Copy(source + suffix, destination + suffix);
     }
 
-    public ValueTask DisposeAsync() => provider.DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var hostedService in hostedServices.Reverse())
+            await hostedService.StopAsync(CancellationToken.None);
+        await provider.DisposeAsync();
+    }
 }

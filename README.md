@@ -2,6 +2,8 @@
 
 LifeOS is a personal workspace for keeping everyday plans in one place. It includes account registration and sign-in, tasks, finance, fitness, document storage, career tracking, and an optional AI assistant.
 
+For installation and everyday usage, see the [LifeOS User Guide](docs/USER_GUIDE.md).
+
 ## Run locally
 
 Requirements: .NET 10 SDK and the Microsoft Edge WebView2 Runtime (usually installed with Windows 11 and Microsoft Edge). The frontend development server additionally requires Node.js and npm.
@@ -47,6 +49,7 @@ Use the SMTP host, credentials, and sender address issued by your email provider
 - `POST /api/auth/change-password` — change the signed-in account password (`currentPassword`, `newPassword`); other active sessions are revoked
 - `GET /api/users/me` / `PUT /api/users/me` — read or update your profile (`name`, `email`)
 - `GET /api/export` — download a ZIP backup of your workspace records and uploaded document files
+- `POST /api/export/restore` — restore a ZIP backup uploaded as the `backup` multipart field; this replaces the signed-in account's workspace records while keeping the account profile and password
 - `GET /api/tasks` — list your tasks
 - `POST /api/tasks` — create a task (`title`, optional `description`, `status`, `priority`, `dueAt`, `recurrence` of `none`, `daily`, `weekly`, or `monthly`, and `reminderAt`)
 - `PUT /api/tasks/{id}` — update one of your tasks
@@ -81,7 +84,7 @@ Use the SMTP host, credentials, and sender address issued by your email provider
 
 Task requests require `Authorization: Bearer <token>`. Status values are `open`, `in-progress`, and `done`; priority values are `low`, `normal`, and `high`. Completing a recurring task creates its next occurrence. A reminder email is sent once at or after `reminderAt` when SMTP is configured and the local API is running. A user's tasks are only accessible to that user.
 
-The Calendar view shows tasks that have due dates. All Tasks supports search, status and priority filters, and sorting. Finance includes monthly category budgets, spending progress, an expense-by-category chart, and a CSV export. Settings lets you update your profile, change your password, and download a ZIP backup containing workspace records and uploaded files.
+The Calendar view shows tasks that have due dates. All Tasks supports search, status and priority filters, and sorting. Finance includes monthly category budgets, spending progress, an expense-by-category chart, and a CSV export. Settings lets you update your profile, change your password, download a ZIP backup, and restore from a LifeOS backup. Restoring replaces the current account's tasks, finance, fitness, documents, and career records; it does not change the account email or password. LifeOS asks for confirmation before restoring.
 
 Finance requests require the same bearer token. Amounts are entered in Indian rupees and may have up to two decimal places. Transaction type is `income` or `expense`; summaries are grouped by calendar month.
 
@@ -112,4 +115,4 @@ dotnet test backend/tests/LifeOS.Api.Tests/LifeOS.Api.Tests.csproj
 
 ### Windows desktop distribution
 
-The desktop host references the backend DLL and bundles the frontend. Publishing still requires an installer that includes the .NET runtime and WebView2 Runtime; user data is kept separately under `%LOCALAPPDATA%\LifeOS`.
+The desktop host references the backend DLL and bundles the frontend. Build a self-contained x64 Windows installer with `powershell -ExecutionPolicy Bypass -File installer/build-installer.ps1`; the script publishes the app and packages it with Inno Setup 6 or 7 into `installer/output/LifeOS-Setup-x64.exe`. The target PC needs the Microsoft Edge WebView2 Runtime. User data stays separately under `%LOCALAPPDATA%\LifeOS` when the app is uninstalled or upgraded.

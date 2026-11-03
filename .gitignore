@@ -9,7 +9,14 @@
 *.user
 *.userosscache
 *.sln.docstates
+.env
+.env.*
+!.env.example
 *.env
+*.db
+*.db-shm
+*.db-wal
+**/App_Data/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -314,6 +321,10 @@ FakesAssemblies/
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
 node_modules/
+frontend/mobile-web/
+installer/output/
+frontend/android/.gradle/
+frontend/android/local.properties
 
 # Visual Studio 6 build log
 *.plg

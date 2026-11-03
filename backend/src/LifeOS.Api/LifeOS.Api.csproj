@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LifeOS.Backend\LifeOS.Backend.csproj" />
-    <Compile Remove="Models\**\*.cs;Data\**\*.cs;Migrations\**\*.cs;Services\DailyFileLoggerProvider.cs;Services\DesktopBackend.cs;Services\OpenAiAssistantService.cs;Services\PasswordResetEmailSender.cs;Services\TaskReminderService.cs" />
+    <Compile Remove="Models\**\*.cs;Data\**\*.cs;Migrations\**\*.cs;Services\DailyFileLoggerProvider.cs;Services\DesktopBackend.cs;Services\OpenAiAssistantService.cs;Services\PasswordResetEmailSender.cs;Services\TaskReminderService.cs;Services\WorkspaceBackupRestore.cs" />
   </ItemGroup>
 
   <ItemGroup>

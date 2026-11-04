@@ -14,4 +14,52 @@
 
 /* Keep the sidebar scrollbar visible and easy to find. */
 .sidebar{height:100vh;overflow-y:scroll;scrollbar-width:thin;scrollbar-color:#92968e #eeeee8}.sidebar::-webkit-scrollbar{width:10px}.sidebar::-webkit-scrollbar-track{background:#eeeee8}.sidebar::-webkit-scrollbar-thumb{background:#92968e;border:2px solid #eeeee8;border-radius:8px}
+
+/* Mobile navigation opens as a labeled drawer instead of a narrow icon strip. */
+.menu-toggle{display:none}
+.sidebar-backdrop{display:none}
+.nav-item{position:relative}
+.nav-item:focus-visible{outline:2px solid #78917b;outline-offset:2px}
+@media(max-width:760px){
+  .menu-toggle{width:38px;height:38px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;flex:none;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--green);cursor:pointer}
+  .menu-toggle span{width:17px;height:2px;border-radius:2px;background:currentColor;transition:transform .18s,opacity .18s}
+  .sidebar-open .menu-toggle span:first-child{transform:translateY(7px) rotate(45deg)}
+  .sidebar-open .menu-toggle span:nth-child(2){opacity:0}
+  .sidebar-open .menu-toggle span:last-child{transform:translateY(-7px) rotate(-45deg)}
+  .sidebar{z-index:30;width:min(280px,calc(100vw - 56px));padding:24px 18px;overflow-y:auto;scrollbar-width:none;transform:translateX(-105%);transition:transform .22s ease;box-shadow:8px 0 28px #17231818}
+  .sidebar::-webkit-scrollbar{display:none}
+  .sidebar-open .sidebar{transform:translateX(0)}
+  .sidebar .brand{justify-content:flex-start}
+  .sidebar .brand>span:last-child,.sidebar .workspace-label,.sidebar .nav-item:not(.active),.sidebar .nav-item.active{font-size:inherit}
+  .sidebar .brand>span:last-child{font-size:20px}
+  .sidebar .workspace-label{font-size:10px}
+  .sidebar nav{margin-top:32px}
+  .sidebar .nav-item{justify-content:flex-start;padding:0 12px}
+  .sidebar .nav-icon{font-size:17px}
+  .sidebar .sidebar-bottom{justify-content:flex-start;flex-wrap:nowrap}
+  .sidebar .profile{display:grid}
+  .sidebar .sidebar-bottom .icon-button{display:block}
+  .sidebar-backdrop{position:fixed;inset:0;z-index:29;border:0;background:#17231855}
+  .sidebar-open .sidebar-backdrop{display:block}
+  .main{width:100%;margin-left:0}
+  .topbar{justify-content:flex-start;gap:14px;padding:0 16px}
+  .crumb{flex:1;min-width:0}
+  .today{white-space:nowrap}
+}
+@media(prefers-reduced-motion:reduce){.sidebar,.menu-toggle span{transition:none}}
 .auth-partner-logo{width:min(100%,270px);margin:0 auto 28px}.auth-partner-logo svg{display:block;width:100%;height:auto}
+
+/* Keep long views scrollable in the Android WebView as well as desktop browsers. */
+html,body{min-height:100%;overflow-y:auto}
+body{-webkit-overflow-scrolling:touch;overscroll-behavior-y:auto}
+.shell{min-height:100vh;min-height:100dvh;height:auto;overflow:visible}
+.main{min-width:0;min-height:100vh;min-height:100dvh;height:auto;overflow:visible}
+.content{height:auto;overflow:visible;padding-bottom:calc(34px + env(safe-area-inset-bottom, 0px))}
+@media(max-width:760px){
+  .shell{display:block;min-height:100vh;min-height:100dvh;height:auto;overflow:visible}
+  .main{position:static;display:block;width:100%;height:auto;min-height:100vh;min-height:100dvh;margin:0;overflow:visible}
+  .topbar{position:sticky;top:0;height:68px;z-index:20;padding-top:env(safe-area-inset-top, 0px)}
+  .content,#app{position:static;display:block;width:100%;height:auto;max-height:none;min-height:0;margin:0;overflow:visible;touch-action:auto;padding:34px 19px calc(24px + env(safe-area-inset-bottom, 0px))}
+  html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:auto}
+  body{-webkit-overflow-scrolling:touch;touch-action:pan-y}
+}

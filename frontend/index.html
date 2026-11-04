@@ -9,14 +9,15 @@
 </head>
 <body>
   <div class="shell">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
       <a class="brand" href="/"><span class="brand-mark">L</span><span>lifeos<span class="brand-dot">.</span></span></a>
       <div class="workspace-label">YOUR WORKSPACE</div>
       <nav><a class="nav-item active" href="#my-day" data-view="my-day"><span class="nav-icon">◷</span> My day</a><a class="nav-item" href="#all-tasks" data-view="all-tasks"><span class="nav-icon">▤</span> All tasks</a><a class="nav-item" href="#calendar" data-view="calendar"><span class="nav-icon">▦</span> Calendar</a><a class="nav-item" href="#finance" data-view="finance"><span class="nav-icon">₹</span> Finance</a><a class="nav-item" href="#fitness" data-view="fitness"><span class="nav-icon">✳</span> Fitness</a><a class="nav-item" href="#documents" data-view="documents"><span class="nav-icon">▧</span> Documents</a><a class="nav-item" href="#career" data-view="career"><span class="nav-icon">↗</span> Career</a><a class="nav-item" href="#assistant" data-view="assistant"><span class="nav-icon">✧</span> AI assistant</a><a class="nav-item" href="#settings" data-view="settings"><span class="nav-icon">⚙</span> Settings</a></nav>
       <div class="sidebar-bottom"><div class="avatar" id="avatar">L</div><div class="profile"><strong id="profile-name">Your account</strong><span>Personal workspace</span></div><button class="icon-button" id="logout" title="Sign out" aria-label="Sign out">↗</button></div>
     </aside>
+    <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Close navigation" tabindex="-1"></button>
     <main class="main">
-      <header class="topbar"><div class="crumb">Workspace <span>/</span> <b id="page-title">My day</b></div><div class="today" id="today"></div></header>
+      <header class="topbar"><button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><span></span><span></span><span></span></button><div class="crumb">Workspace <span>/</span> <b id="page-title">My day</b></div><div class="today" id="today"></div></header>
       <section class="content" id="app" hidden>
         <div id="tasks-view">
         <div class="intro"><div><div class="eyebrow">A LITTLE PROGRESS ADDS UP</div><h1>Make room for<br><span>what matters.</span></h1><p class="subtitle">A calmer place to keep your next steps in view.</p></div><div class="sun-art" aria-hidden="true"><div class="sun">✳</div><div class="sun-line"></div></div></div>

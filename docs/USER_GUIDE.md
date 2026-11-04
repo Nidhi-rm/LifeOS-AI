@@ -35,6 +35,8 @@ The first run downloads the model (about 2.5 GB). Leave Ollama running while cha
 
 In **Settings**, choose the workspace backup action to download a ZIP containing your workspace records and uploaded documents. Save it somewhere separate from your computer, such as an external drive.
 
+On Android, use **Download backup** in Settings; the ZIP is saved in the device's **Downloads** folder as `lifeos-backup-YYYY-MM-DD.zip`. To restore it, choose that ZIP from **Downloads** in the Android file picker.
+
 To restore, select a LifeOS backup ZIP in Settings and confirm. Restoring **replaces the signed-in account's current tasks, finance, fitness, documents, and career records** with the backup contents. It keeps the account profile and password. Make a fresh backup first if you may need the current data.
 
 ## Mobile app development (Android and iPhone)

@@ -49,6 +49,7 @@ public sealed class DesktopBackendHost : IAsyncDisposable
             .AddJsonFile("appsettings.json", optional: true)
             .AddJsonFile("appsettings.Development.json", optional: true)
             .AddJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft", "UserSecrets", "LifeOS.Api-Local-Development", "secrets.json"), optional: true)
+            .AddJsonFile(Path.Combine(dataRoot, "appsettings.json"), optional: true)
             .AddEnvironmentVariables()
             .Build();
         var services = new ServiceCollection();
@@ -61,7 +62,26 @@ public sealed class DesktopBackendHost : IAsyncDisposable
         services.AddHttpClient<OpenAiAssistantService>(client => client.Timeout = TimeSpan.FromSeconds(90));
         services.AddSingleton<PasswordResetEmailSender>();
         services.AddHostedService<TaskReminderService>();
-        services.AddDbContextFactory<LifeOSDbContext>(options => options.UseSqlite($"Data Source={databasePath}"));
+        var databaseProvider = configuration["LifeOS:DatabaseProvider"]?.Trim();
+        if (string.Equals(databaseProvider, "PostgreSQL", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(databaseProvider, "Postgres", StringComparison.OrdinalIgnoreCase))
+        {
+            var connectionString = configuration.GetConnectionString("LifeOS");
+            if (string.IsNullOrWhiteSpace(connectionString))
+                throw new InvalidOperationException("PostgreSQL is selected, but ConnectionStrings:LifeOS is missing from appsettings.json.");
+
+            services.AddDbContextFactory<LifeOSDbContext>(options => options.UseNpgsql(connectionString,
+                postgres => postgres.MigrationsAssembly("LifeOS.PostgresMigrations")));
+        }
+        else if (string.IsNullOrWhiteSpace(databaseProvider)
+            || string.Equals(databaseProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddDbContextFactory<LifeOSDbContext>(options => options.UseSqlite($"Data Source={databasePath}"));
+        }
+        else
+        {
+            throw new InvalidOperationException($"Unsupported LifeOS:DatabaseProvider '{databaseProvider}'. Use SQLite or PostgreSQL.");
+        }
         services.AddSingleton<DesktopBackend>();
         services.AddSingleton<IDesktopBackend>(sp => sp.GetRequiredService<DesktopBackend>());
 

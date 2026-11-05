@@ -21,6 +21,25 @@ Your local workspace data is stored under `%LOCALAPPDATA%\LifeOS`. Uninstalling 
 - **Career:** Track job applications and skill goals.
 - **Settings:** Update your profile or password, back up your workspace, and restore a backup.
 
+## Use PostgreSQL with the Windows desktop app
+
+The desktop app uses SQLite by default. To use the PostgreSQL server installed on this PC, first make a workspace backup in **Settings**. Then close LifeOS and create `%LOCALAPPDATA%\LifeOS\appsettings.json` with this content, replacing `YOUR_POSTGRES_PASSWORD` with the password you set for PostgreSQL's `postgres` account:
+
+```json
+{
+  "LifeOS": {
+    "DatabaseProvider": "PostgreSQL"
+  },
+  "ConnectionStrings": {
+    "LifeOS": "Host=localhost;Port=5432;Database=lifeos;Username=postgres;Password=YOUR_POSTGRES_PASSWORD"
+  }
+}
+```
+
+Start LifeOS again. It will create the PostgreSQL tables automatically. Create an account in this new database, sign in, then use **Settings > Restore** to import the backup ZIP. The backup restores workspace records and uploaded documents; it does not move the account password. In pgAdmin, expand **Databases > lifeos > Schemas > public > Tables** and refresh to see the tables. New tasks, finance entries, fitness records, document metadata, and career records will then be stored in PostgreSQL. Uploaded document files remain in the local LifeOS data folder and are included in workspace backups.
+
+The PostgreSQL connection password is stored in this per-user config file. Keep it private and do not commit the file to GitHub. To return to the existing SQLite database, change `DatabaseProvider` to `SQLite` and restart LifeOS.
+
 ## AI assistant (optional)
 
 The assistant uses Ollama locally by default. Install Ollama for Windows, then run this once in PowerShell:

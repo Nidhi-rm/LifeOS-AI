@@ -261,6 +261,7 @@ public sealed class DesktopBackend(IDbContextFactory<LifeOSDbContext> contexts, 
     private async Task<DesktopResult> HabitCheckIn(string? token, int? id, JsonElement data, bool remove, CancellationToken ct)
     {
         var text = Text(data, "date"); if (!DateTime.TryParseExact(text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)) return DesktopResult.Error(400, "Date must use YYYY-MM-DD format.");
+        date = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc);
         await using var db = await contexts.CreateDbContextAsync(ct); var uid = await UserId(db, token, ct); if (uid is null) return Unauthorized();
         if (remove) { var row = await db.HabitCheckIns.FirstOrDefaultAsync(x => x.HabitId == id && x.UserId == uid && x.Date == date, ct); if (row is null) return DesktopResult.Error(404, "Habit check-in not found."); db.HabitCheckIns.Remove(row); await db.SaveChangesAsync(ct); return DesktopResult.Empty(204); }
         var exists = await db.FitnessHabits.AnyAsync(x => x.Id == id && x.UserId == uid && x.IsActive, ct); if (!exists) return DesktopResult.Error(404, "Habit not found.");
